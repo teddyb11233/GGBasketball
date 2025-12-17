@@ -1,9 +1,19 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class TestImpulse : MonoBehaviour
+[RequireComponent(typeof(Rigidbody))]
+public class TestTargetShot : MonoBehaviour
 {
-    [SerializeField] private Vector3 impulseDirection = Vector3.forward;
-    [SerializeField] private float impulseStrength = 3f;
+    [Header("Target")]
+    [SerializeField] private Transform hoopTarget;
+
+    [Header("Shot Power")]
+    [SerializeField] private float minForce = 6f;
+    [SerializeField] private float maxForce = 14f;
+    [SerializeField] private float maxEffectiveDistance = 12f;
+
+    [Header("Arc Control")]
+    [SerializeField] private float verticalBoost = 0.35f;
 
     private Rigidbody rb;
 
@@ -12,9 +22,32 @@ public class TestImpulse : MonoBehaviour
         rb = GetComponent<Rigidbody>();
     }
 
-    private void Start()
+    private void Update()
     {
-        // One-time physics push when Play starts
-        rb.AddForce(impulseDirection.normalized * impulseStrength, ForceMode.Impulse);
+        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            ShootAtTarget();
+        }
+    }
+
+    private void ShootAtTarget()
+    {
+        if (hoopTarget == null)
+            return;
+
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+        Vector3 toTarget = hoopTarget.position - transform.position;
+        float distance = toTarget.magnitude;
+
+        float t = Mathf.Clamp01(distance / maxEffectiveDistance);
+        float force = Mathf.Lerp(minForce, maxForce, t);
+
+        Vector3 direction = toTarget.normalized;
+        direction.y += verticalBoost;
+        direction.Normalize();
+
+        rb.AddForce(direction * force, ForceMode.Impulse);
     }
 }
