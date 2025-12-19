@@ -35,19 +35,26 @@ public class TestTargetShot : MonoBehaviour
         if (hoopTarget == null)
             return;
 
+        // Reset motion
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
 
         Vector3 toTarget = hoopTarget.position - transform.position;
-        float distance = toTarget.magnitude;
 
-        float t = Mathf.Clamp01(distance / maxEffectiveDistance);
-        float force = Mathf.Lerp(minForce, maxForce, t);
+        // Horizontal-only direction
+        Vector3 horizontal = new Vector3(toTarget.x, 0f, toTarget.z);
+        float horizontalDistance = horizontal.magnitude;
+        Vector3 forwardDir = horizontal.normalized;
 
-        Vector3 direction = toTarget.normalized;
-        direction.y += verticalBoost;
-        direction.Normalize();
+        float t = Mathf.Clamp01(horizontalDistance / maxEffectiveDistance);
+        float forwardForce = Mathf.Lerp(minForce, maxForce, t);
+        float verticalForce = forwardForce * verticalBoost;
 
-        rb.AddForce(direction * force, ForceMode.Impulse);
+        Vector3 impulse =
+            forwardDir * forwardForce +
+            Vector3.up * verticalForce;
+
+        rb.AddForce(impulse, ForceMode.VelocityChange);
     }
+
 }

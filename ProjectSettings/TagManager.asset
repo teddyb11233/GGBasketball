@@ -5,14 +5,15 @@ TagManager:
   serializedVersion: 3
   tags:
   - Ball
+  - CinemachineTarget
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Ball
+  - Basketball
   - Water
   - UI
-  - 
+  - Player
   - OutOfBounds
   - 
   - 

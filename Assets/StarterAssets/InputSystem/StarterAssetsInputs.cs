@@ -13,7 +13,11 @@ namespace StarterAssets
 		public bool jump;
 		public bool sprint;
 
-		[Header("Movement Settings")]
+        [Header("Basketball Input Values")]
+        public bool interact;
+        public bool shoot;
+
+        [Header("Movement Settings")]
 		public bool analogMovement;
 
 		[Header("Mouse Cursor Settings")]
@@ -65,8 +69,28 @@ namespace StarterAssets
 		{
 			sprint = newSprintState;
 		}
+        
+		public void OnInteract(InputValue value)
+        {
+            InteractInput(value.isPressed);
+        }
 
-		private void OnApplicationFocus(bool hasFocus)
+        public void OnShoot(InputValue value)
+        {
+            ShootInput(value.isPressed);
+        }
+
+        public void InteractInput(bool newInteractState)
+        {
+            interact = newInteractState;
+        }
+
+        public void ShootInput(bool newShootState)
+        {
+            shoot = newShootState;
+        }
+
+        private void OnApplicationFocus(bool hasFocus)
 		{
 			SetCursorState(cursorLocked);
 		}
